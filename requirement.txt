@@ -42,3 +42,6 @@ pytest>=7.0.0
 black>=22.0.0
 flake8>=5.0.0
 jupyter>=1.0.0     # For development and analysis
+gunicorn
+pinecone-client
+python-dotenv
