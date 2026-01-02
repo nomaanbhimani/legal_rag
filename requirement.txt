@@ -1,47 +1,11 @@
-streamlit>=1.28.0
-torch>=1.13.0
-transformers>=4.30.0  # Updated for better model support
-chromadb>=0.4.0
-numpy>=1.21.0
-scikit-learn>=1.1.0
-
-# Document processing
-PyPDF2>=2.12.0
-python-docx>=0.8.11
-
-# Enhanced ML capabilities for InLegalBERT
-accelerate>=0.20.0  # For GPU acceleration and model optimization
-datasets>=2.12.0   # For data handling if fine-tuning needed
-tokenizers>=0.13.0  # Fast tokenization
-safetensors>=0.3.0  # Safe model serialization
-
-# Vector search and similarity
-faiss-cpu>=1.7.0   # Fast similarity search (alternative to ChromaDB)
-sentence-transformers>=2.2.0  # Fallback embedding model
-
-# Text processing and NLP utilities
-spacy>=3.4.0       # Advanced NLP features
-nltk>=3.8          # Natural language processing toolkit
-textstat>=0.7.0    # Readability analysis
-
-# Legal text processing utilities
-regex>=2022.7.0    # Advanced regex for legal text patterns
-fuzzywuzzy>=0.18.0 # Fuzzy string matching for legal terms
-python-Levenshtein>=0.20.0  # String distance for concept matching
-
-# Model serving and optimization
-optimum>=1.8.0     # Model optimization
-onnxruntime>=1.14.0  # ONNX runtime for faster inference (optional)
-
-# Data handling
-pandas>=1.5.0      # Data manipulation
-jsonlines>=3.1.0   # JSON line format handling
-
-# Development and testing
-pytest>=7.0.0
-black>=22.0.0
-flake8>=5.0.0
-jupyter>=1.0.0     # For development and analysis
+streamlit
+torch
+transformers
+chromadb
+PyPDF2
+python-docx
+numpy
+scikit-learn
 gunicorn
 pinecone-client
 python-dotenv
