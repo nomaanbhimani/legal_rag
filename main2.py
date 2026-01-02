@@ -18,7 +18,7 @@ from dataclasses import dataclass
 # Configuration
 @dataclass
 class Config:
-    MODEL_NAME: str = "law-ai/InLegalBERT"
+    MODEL_NAME: str = "ai4bharat/Paramanu-Ayn"
     CHUNK_SIZE: int = 512
     CHUNK_OVERLAP: int = 50
     MAX_CONTEXT_LENGTH: int = 2000
@@ -43,12 +43,12 @@ class LegalMindBrain:
         
         try:
             # Core tokenizer and embedding model
-            _self.tokenizer = AutoTokenizer.from_pretrained(config.MODEL_NAME)
+            _self.tokenizer = AutoTokenizer.from_pretrained(config.MODEL_NAME, trust_remote_code=True)
             if _self.tokenizer.pad_token is None:
                 _self.tokenizer.pad_token = _self.tokenizer.eos_token
             
             # Embedding model for RAG
-            _self.embedding_model = AutoModel.from_pretrained(config.MODEL_NAME)
+            _self.embedding_model = AutoModel.from_pretrained(config.MODEL_NAME, trust_remote_code=True)
             _self.embedding_model.to(_self.device)
             _self.embedding_model.eval()
             
