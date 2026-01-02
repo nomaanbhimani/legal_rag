@@ -18,7 +18,7 @@ from dataclasses import dataclass
 # Configuration
 @dataclass
 class Config:
-    MODEL_NAME: str = "ai4bharat/Paramanu-Ayn"
+    MODEL_NAME: str = "Pclanglais/Paramanu-Ayn"
     CHUNK_SIZE: int = 512
     CHUNK_OVERLAP: int = 50
     MAX_CONTEXT_LENGTH: int = 2000
