@@ -19,7 +19,7 @@ class Config:
     QA_MODEL: str = "deepset/roberta-base-squad2"
     CHUNK_SIZE: int = 512
     CHUNK_OVERLAP: int = 50
-    HF_TOKEN: str = st.secrets.get("HF_TOKEN", "")
+    HF_TOKEN: str = st.secrets.get("HF_TOKEN", "") or os.getenv("HF_TOKEN", "")
 
 config = Config()
 
