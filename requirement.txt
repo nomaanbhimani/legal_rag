@@ -1,11 +1,7 @@
 streamlit
-torch
-transformers
 chromadb
 PyPDF2
 python-docx
-numpy
 scikit-learn
-gunicorn
-pinecone-client
-python-dotenv
+numpy
+requests
