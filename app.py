@@ -35,7 +35,12 @@ from werkzeug.utils import secure_filename
 
 
 
-
+try:
+    from huggingface_hub import InferenceClient
+    HF_CLIENT_AVAILABLE = True
+except ImportError:
+    HF_CLIENT_AVAILABLE = False
+    print("⚠️ huggingface-hub not installed. Install with: pip install huggingface-hub")
 # PDF Support
 try:
     from PyPDF2 import PdfReader
@@ -66,9 +71,10 @@ class Config:
     
     HF_TOKEN = os.getenv("HF_TOKEN", "")
     HF_API_BASE = "https://api-inference.huggingface.co/models"
-    API_TIMEOUT = 25  
+    API_TIMEOUT = 60  
     
     EMBEDDING_MODEL = "law-ai/InLegalBERT"
+    EMBEDDING_DIM = 768
     QA_MODEL = "deepset/roberta-base-squad2"
     
     CHUNK_SIZE = 400           
@@ -922,36 +928,55 @@ class LegalChunker:
 
 class EmbeddingEngine:
     """
-    API-based embedding engine using InLegalBERT.
+    Embedding engine using HuggingFace InferenceClient for InLegalBERT.
     
-    Uses Hugging Face Inference API to avoid loading model in memory.
-    Includes caching to reduce API calls and improve response time.
-    
-    InLegalBERT is trained on 5M+ Indian legal documents and achieves
-    state-of-the-art performance on Indian legal NLP tasks.
+    InLegalBERT is specifically trained on Indian legal documents and provides
+    better embeddings for legal text than generic models.
     """
     
     def __init__(self):
-        """Initialize the embedding engine"""
-        self.api_url = f"{Config.HF_API_BASE}/{Config.EMBEDDING_MODEL}"
-        self.headers = {
-            "Authorization": f"Bearer {Config.HF_TOKEN}"
-        } if Config.HF_TOKEN else {}
+        """Initialize the embedding engine with HuggingFace client"""
+        self.model_name = Config.EMBEDDING_MODEL
+        self.embedding_dim = Config.EMBEDDING_DIM
+        
+        # Initialize HuggingFace client
+        if HF_CLIENT_AVAILABLE and Config.HF_TOKEN:
+            try:
+                self.client = InferenceClient(
+                    provider="hf-inference",
+                    api_key=Config.HF_TOKEN,
+                )
+                self.use_client = True
+                print(f"✅ HuggingFace InferenceClient initialized for {self.model_name}")
+            except Exception as e:
+                print(f"⚠️ Failed to initialize InferenceClient: {e}")
+                self.client = None
+                self.use_client = False
+        else:
+            self.client = None
+            self.use_client = False
+            if not HF_CLIENT_AVAILABLE:
+                print("⚠️ huggingface-hub not installed")
+            if not Config.HF_TOKEN:
+                print("⚠️ HF_TOKEN not set")
+        
+        # Fallback API URL
+        self.api_url = f"{Config.HF_API_BASE}/{self.model_name}"
+        self.headers = {"Authorization": f"Bearer {Config.HF_TOKEN}"} if Config.HF_TOKEN else {}
         
         # LRU cache for embeddings
         self._cache: Dict[str, np.ndarray] = {}
         self._cache_order: List[str] = []
     
     def _get_cache_key(self, text: str) -> str:
-        """Generate cache key from text (first 500 chars)"""
+        """Generate cache key from text"""
         return hashlib.md5(text[:500].encode()).hexdigest()
     
     def _manage_cache(self, key: str, value: np.ndarray):
-        """LRU cache management to prevent memory bloat"""
+        """LRU cache management"""
         if key in self._cache:
             return
         
-        # Remove oldest entry if cache is full
         if len(self._cache) >= Config.EMBEDDING_CACHE_SIZE:
             old_key = self._cache_order.pop(0)
             if old_key in self._cache:
@@ -960,86 +985,143 @@ class EmbeddingEngine:
         self._cache[key] = value
         self._cache_order.append(key)
     
-    def get_embedding(self, text: str) -> np.ndarray:
+    def _get_embedding_via_client(self, text: str) -> Optional[np.ndarray]:
         """
-        Get embedding vector for text.
-        
-        Uses cache if available, otherwise calls HuggingFace API.
-        
-        Args:
-            text: Text to embed
-            
-        Returns:
-            768-dimensional numpy array
+        Get embedding using HuggingFace InferenceClient.
+        Uses feature extraction to get embeddings from BERT model.
         """
-        cache_key = self._get_cache_key(text)
-        
-        # Check cache first
-        if cache_key in self._cache:
-            return self._cache[cache_key]
+        if not self.client:
+            return None
         
         try:
-            # Truncate text to avoid API limits
-            truncated = text[:1000]
+            # Use feature_extraction for getting embeddings
+            result = self.client.feature_extraction(
+                text,
+                model=self.model_name,
+            )
             
-            # Call HuggingFace API
+            # Parse result
+            arr = np.array(result, dtype=np.float32)
+            
+            # Handle different response shapes
+            if len(arr.shape) == 1:
+                return arr
+            elif len(arr.shape) == 2:
+                # [sequence_length, hidden_dim] -> mean pooling
+                return arr.mean(axis=0)
+            elif len(arr.shape) == 3:
+                # [batch, sequence, hidden] -> mean pooling
+                return arr[0].mean(axis=0)
+            
+            return arr.flatten()[:self.embedding_dim]
+            
+        except Exception as e:
+            print(f"⚠️ InferenceClient error: {e}")
+            return None
+    
+    def _get_embedding_via_api(self, text: str) -> Optional[np.ndarray]:
+        """
+        Fallback: Get embedding using direct REST API call.
+        """
+        try:
             response = requests.post(
                 self.api_url,
                 headers=self.headers,
                 json={
-                    "inputs": truncated,
+                    "inputs": text,
                     "options": {"wait_for_model": True, "use_cache": True}
                 },
                 timeout=Config.API_TIMEOUT
             )
             
-            # Handle model loading (503)
             if response.status_code == 503:
-                time.sleep(3)
+                print("⏳ Model loading, waiting...")
+                time.sleep(10)
                 response = requests.post(
                     self.api_url,
                     headers=self.headers,
-                    json={"inputs": truncated, "options": {"wait_for_model": True}},
+                    json={"inputs": text, "options": {"wait_for_model": True}},
                     timeout=Config.API_TIMEOUT
                 )
             
-            response.raise_for_status()
+            if response.status_code != 200:
+                print(f"❌ API Error: {response.status_code} - {response.text[:100]}")
+                return None
+            
             result = response.json()
             
-            # Handle different response formats from HF API
+            if isinstance(result, dict) and 'error' in result:
+                print(f"❌ API Error: {result['error']}")
+                return None
+            
             arr = np.array(result, dtype=np.float32)
             
-            if len(arr.shape) == 3:
-                # [Batch, Sequence, Hidden] -> Mean pooling
-                embedding = arr[0].mean(axis=0)
+            if len(arr.shape) == 1:
+                return arr
             elif len(arr.shape) == 2:
-                # [Sequence, Hidden] -> Mean pooling
-                embedding = arr.mean(axis=0)
-            else:
-                embedding = arr
+                return arr.mean(axis=0)
+            elif len(arr.shape) == 3:
+                return arr[0].mean(axis=0)
             
-            # Cache the result
-            self._manage_cache(cache_key, embedding)
-            return embedding
+            return arr.flatten()[:self.embedding_dim]
             
-        except requests.exceptions.Timeout:
-            print(f"Embedding API timeout")
-            return np.zeros(768, dtype=np.float32)
         except Exception as e:
-            print(f"Embedding error: {e}")
-            return np.zeros(768, dtype=np.float32)
+            print(f"⚠️ API error: {e}")
+            return None
+    
+    def get_embedding(self, text: str) -> np.ndarray:
+        """
+        Get embedding vector for text.
+        
+        Tries:
+        1. Cache
+        2. HuggingFace InferenceClient
+        3. Direct REST API
+        4. Returns zero vector as fallback
+        """
+        # Clean and validate text
+        text = text.strip()
+        if not text:
+            return np.zeros(self.embedding_dim, dtype=np.float32)
+        
+        # Truncate long text
+        text = text[:512]  # BERT max token limit
+        
+        # Check cache
+        cache_key = self._get_cache_key(text)
+        if cache_key in self._cache:
+            return self._cache[cache_key]
+        
+        embedding = None
+        
+        # Try InferenceClient first
+        if self.use_client:
+            embedding = self._get_embedding_via_client(text)
+        
+        # Fallback to REST API
+        if embedding is None:
+            embedding = self._get_embedding_via_api(text)
+        
+        # Final fallback: zero vector
+        if embedding is None:
+            print(f"⚠️ Using zero vector for: {text[:50]}...")
+            embedding = np.zeros(self.embedding_dim, dtype=np.float32)
+        
+        # Ensure correct dimension
+        if len(embedding) != self.embedding_dim:
+            if len(embedding) > self.embedding_dim:
+                embedding = embedding[:self.embedding_dim]
+            else:
+                padded = np.zeros(self.embedding_dim, dtype=np.float32)
+                padded[:len(embedding)] = embedding
+                embedding = padded
+        
+        # Cache and return
+        self._manage_cache(cache_key, embedding)
+        return embedding
     
     def compute_similarity(self, emb1: np.ndarray, emb2: np.ndarray) -> float:
-        """
-        Compute cosine similarity between two embeddings.
-        
-        Args:
-            emb1: First embedding vector
-            emb2: Second embedding vector
-            
-        Returns:
-            Similarity score between 0 and 1
-        """
+        """Compute cosine similarity between embeddings"""
         norm1 = np.linalg.norm(emb1)
         norm2 = np.linalg.norm(emb2)
         
@@ -1052,6 +1134,29 @@ class EmbeddingEngine:
         """Clear the embedding cache"""
         self._cache.clear()
         self._cache_order.clear()
+    
+    def test_connection(self) -> Dict[str, Any]:
+        """Test the embedding model connection"""
+        try:
+            test_text = "This is a test sentence for legal document processing."
+            embedding = self.get_embedding(test_text)
+            
+            is_working = not np.all(embedding == 0)
+            
+            return {
+                "model": self.model_name,
+                "status": "connected" if is_working else "failed",
+                "embedding_dim": self.embedding_dim,
+                "client_available": self.use_client,
+                "sample_embedding_norm": float(np.linalg.norm(embedding))
+            }
+        except Exception as e:
+            return {
+                "model": self.model_name,
+                "status": "error",
+                "error": str(e)
+            }
+
 
 
 
