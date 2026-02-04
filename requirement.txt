@@ -1,15 +1,15 @@
 
-flask==3.0.1
-flask-cors==4.0.0
-gunicorn==21.2.0
-Werkzeug==3.0.1
-requests==2.31.0
-urllib3==2.1.0
-numpy==1.24.3
-PyPDF2==3.0.1
-pdfplumber==0.10.3
+flask
+flask-cors
+gunicorn
+Werkzeug
+requests
+urllib3
+numpy
+PyPDF2
+pdfplumber
 # pdfplumber dependencies (usually auto-installed)
-pdfminer.six==20231228
-Pillow==10.2.0
-python-docx==1.1.0
-lxml==5.1.0
+pdfminer.six
+Pillow
+python-docx
+lxml
