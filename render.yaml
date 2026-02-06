@@ -1,16 +1,25 @@
 services:
   - type: web
-    name: legalmind-india
+    name: indian-legal-rag
     runtime: python
-    region: oregon
+    region: oregon  # or singapore for Asia
     plan: free
-    buildCommand: |
-      pip install --upgrade pip setuptools wheel
-      pip install -r requirements.txt
-    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --timeout 120 --workers 1 --threads 2
+    
+    # Build configuration
+    buildCommand: pip install --no-cache-dir -r requirements.txt
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --threads 2 --timeout 30 --keep-alive 5 --max-requests 100 --max-requests-jitter 10
+    
+    # Environment
     envVars:
-      - key: HF_TOKEN
-        sync: false
       - key: PYTHON_VERSION
-        value: "3.11.7"
-    healthCheckPath: /health
+        value: "3.11.0"
+      - key: HF_TOKEN
+        sync: false  # Set manually in dashboard
+      - key: DEBUG
+        value: "false"
+    
+    # Health check
+    healthCheckPath: /api/health
+    
+    # Auto-deploy on push
+    autoDeploy: true
