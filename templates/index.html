@@ -3,1755 +3,1579 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LegalMind India 🏛️ - AI Legal Assistant</title>
-    
-    <!-- Tailwind CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+    <title>🇮🇳 Indian Legal Document Simplifier</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* ═══════════════════════════════════════════════════════════════════════
-           CSS VARIABLES & BASE STYLES
-           ═══════════════════════════════════════════════════════════════════════ */
         :root {
-            --primary: #1e3a5f;
-            --secondary: #2d5a87;
-            --accent: #3b82f6;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
+            --saffron: #FF9933;
+            --saffron-light: #FFB366;
+            --green: #138808;
+            --green-light: #1DB954;
+            --navy: #000080;
+            --bg-primary: #0F172A;
+            --bg-secondary: #1E293B;
+            --bg-tertiary: #334155;
+            --bg-card: #1E293B;
+            --text-primary: #F8FAFC;
+            --text-secondary: #94A3B8;
+            --text-muted: #64748B;
+            --accent-emerald: #10B981;
+            --accent-red: #EF4444;
+            --accent-amber: #F59E0B;
+            --accent-blue: #3B82F6;
+            --accent-purple: #8B5CF6;
+            --border: rgba(255, 255, 255, 0.1);
+            --shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            --radius: 12px;
+            --radius-lg: 16px;
+            --transition: all 0.3s ease;
         }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
-        * {
-            box-sizing: border-box;
-        }
+        html { scroll-behavior: smooth; }
         
         body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background-color: #f8fafc;
-        }
-        
-        /* ═══════════════════════════════════════════════════════════════════════
-           GRADIENT & CARD STYLES
-           ═══════════════════════════════════════════════════════════════════════ */
-        .gradient-bg {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-        }
-        
-        .card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            transition: box-shadow 0.3s ease, transform 0.2s ease;
-        }
-        
-        .card:hover {
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
         }
 
-        /* ═══════════════════════════════════════════════════════════════════════
-           LOADING SPINNERS & ANIMATIONS
-           ═══════════════════════════════════════════════════════════════════════ */
-        
-        /* Basic Spinner */
-        .spinner {
-            border: 3px solid #e5e7eb;
-            border-top: 3px solid var(--accent);
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            animation: spin 0.8s linear infinite;
-            display: inline-block;
-        }
-        
-        .spinner-lg {
-            width: 40px;
-            height: 40px;
-            border-width: 4px;
-        }
-        
-        .spinner-xl {
-            width: 60px;
-            height: 60px;
-            border-width: 5px;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        /* Pulse Spinner */
-        .pulse-spinner {
-            width: 40px;
-            height: 40px;
-            background-color: var(--accent);
-            border-radius: 50%;
-            animation: pulse-scale 1.2s ease-in-out infinite;
-        }
-        
-        @keyframes pulse-scale {
-            0%, 100% { transform: scale(0.8); opacity: 0.5; }
-            50% { transform: scale(1); opacity: 1; }
-        }
-        
-        /* Dots Loading */
-        .dots-loading {
-            display: flex;
-            gap: 6px;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .dots-loading span {
-            width: 10px;
-            height: 10px;
-            background-color: var(--accent);
-            border-radius: 50%;
-            animation: dots-bounce 1.4s ease-in-out infinite both;
-        }
-        
-        .dots-loading span:nth-child(1) { animation-delay: -0.32s; }
-        .dots-loading span:nth-child(2) { animation-delay: -0.16s; }
-        .dots-loading span:nth-child(3) { animation-delay: 0; }
-        
-        @keyframes dots-bounce {
-            0%, 80%, 100% { transform: scale(0); }
-            40% { transform: scale(1); }
-        }
-        
-        /* Bar Loading */
-        .bar-loading {
-            display: flex;
-            gap: 4px;
-            align-items: flex-end;
-            justify-content: center;
-            height: 30px;
-        }
-        
-        .bar-loading span {
-            width: 6px;
-            background: linear-gradient(to top, var(--accent), var(--secondary));
-            border-radius: 3px;
-            animation: bar-stretch 1.2s ease-in-out infinite;
-        }
-        
-        .bar-loading span:nth-child(1) { animation-delay: 0s; height: 15px; }
-        .bar-loading span:nth-child(2) { animation-delay: 0.1s; height: 20px; }
-        .bar-loading span:nth-child(3) { animation-delay: 0.2s; height: 25px; }
-        .bar-loading span:nth-child(4) { animation-delay: 0.3s; height: 20px; }
-        .bar-loading span:nth-child(5) { animation-delay: 0.4s; height: 15px; }
-        
-        @keyframes bar-stretch {
-            0%, 100% { transform: scaleY(1); }
-            50% { transform: scaleY(1.5); }
-        }
-        
-        /* Circle Progress */
-        .circle-progress {
-            width: 60px;
-            height: 60px;
-            position: relative;
-        }
-        
-        .circle-progress svg {
-            transform: rotate(-90deg);
-        }
-        
-        .circle-progress circle {
-            fill: none;
-            stroke-width: 5;
-            stroke-linecap: round;
-        }
-        
-        .circle-progress .bg {
-            stroke: #e5e7eb;
-        }
-        
-        .circle-progress .progress {
-            stroke: var(--accent);
-            stroke-dasharray: 157;
-            stroke-dashoffset: 157;
-            animation: circle-fill 2s ease-in-out infinite;
-        }
-        
-        @keyframes circle-fill {
-            0% { stroke-dashoffset: 157; }
-            50% { stroke-dashoffset: 0; }
-            100% { stroke-dashoffset: -157; }
-        }
-        
-        /* Document Processing Animation */
-        .doc-processing {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 16px;
-            padding: 40px;
-        }
-        
-        .doc-icon-animated {
-            position: relative;
-            width: 80px;
-            height: 100px;
-        }
-        
-        .doc-icon-animated .page {
-            position: absolute;
-            width: 60px;
-            height: 80px;
-            background: white;
-            border: 2px solid var(--accent);
-            border-radius: 4px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        
-        .doc-icon-animated .page:nth-child(1) {
-            top: 0;
-            animation: page-shuffle 1.5s ease-in-out infinite;
-        }
-        
-        .doc-icon-animated .page:nth-child(2) {
-            top: 5px;
-            animation: page-shuffle 1.5s ease-in-out 0.2s infinite;
-            opacity: 0.7;
-        }
-        
-        .doc-icon-animated .page:nth-child(3) {
-            top: 10px;
-            animation: page-shuffle 1.5s ease-in-out 0.4s infinite;
-            opacity: 0.4;
-        }
-        
-        .doc-icon-animated .scan-line {
-            position: absolute;
-            width: 50px;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, var(--accent), transparent);
-            left: 50%;
-            transform: translateX(-50%);
-            animation: scan-move 1.5s ease-in-out infinite;
-        }
-        
-        @keyframes page-shuffle {
-            0%, 100% { transform: translateX(-50%) translateY(0); }
-            50% { transform: translateX(-50%) translateY(-10px); }
-        }
-        
-        @keyframes scan-move {
-            0% { top: 10px; opacity: 0; }
-            20% { opacity: 1; }
-            80% { opacity: 1; }
-            100% { top: 80px; opacity: 0; }
-        }
-        
-        /* Upload Progress Bar */
-        .upload-progress-container {
-            width: 100%;
-            background: #e5e7eb;
-            border-radius: 10px;
-            overflow: hidden;
-            height: 8px;
-        }
-        
-        .upload-progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, var(--accent), var(--success));
-            border-radius: 10px;
-            transition: width 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .upload-progress-bar::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 255, 255, 0.4),
-                transparent
-            );
-            animation: progress-shine 1.5s infinite;
-        }
-        
-        @keyframes progress-shine {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-        
-        /* Skeleton Loading */
-        .skeleton {
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-            background-size: 200% 100%;
-            animation: skeleton-loading 1.5s infinite;
-            border-radius: 4px;
-        }
-        
-        @keyframes skeleton-loading {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-        
-        /* Processing Steps */
-        .processing-steps {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            width: 100%;
-            max-width: 300px;
-        }
-        
-        .step {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 16px;
-            background: #f8fafc;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-        }
-        
-        .step.active {
-            background: #eff6ff;
-            border-left: 3px solid var(--accent);
-        }
-        
-        .step.completed {
-            background: #f0fdf4;
-            border-left: 3px solid var(--success);
-        }
-        
-        .step-icon {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-        }
-        
-        .step.pending .step-icon {
-            background: #e5e7eb;
-            color: #9ca3af;
-        }
-        
-        .step.active .step-icon {
-            background: var(--accent);
-            color: white;
-            animation: pulse-scale 1s infinite;
-        }
-        
-        .step.completed .step-icon {
-            background: var(--success);
-            color: white;
-        }
-        
-        .step-text {
-            font-size: 14px;
-            color: #6b7280;
-        }
-        
-        .step.active .step-text {
-            color: var(--accent);
-            font-weight: 500;
-        }
-        
-        .step.completed .step-text {
-            color: var(--success);
-        }
-
-        /* ═══════════════════════════════════════════════════════════════════════
-           FILE UPLOAD OVERLAY
-           ═══════════════════════════════════════════════════════════════════════ */
-        .upload-overlay {
+        /* Background */
+        .bg-gradient {
             position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                radial-gradient(ellipse at 20% 0%, rgba(255, 153, 51, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 100%, rgba(19, 136, 8, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(59, 130, 246, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        .header {
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border);
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+            position: sticky;
             top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(4px);
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--saffron) 0%, var(--saffron-light) 100%);
+            border-radius: var(--radius);
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-        }
-        
-        .upload-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-        
-        .upload-modal {
-            background: white;
-            border-radius: 16px;
-            padding: 40px;
-            max-width: 450px;
-            width: 90%;
-            text-align: center;
-            transform: scale(0.9);
-            transition: transform 0.3s ease;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-        }
-        
-        .upload-overlay.active .upload-modal {
-            transform: scale(1);
+            font-size: 24px;
+            box-shadow: 0 4px 20px rgba(255, 153, 51, 0.3);
         }
 
-        /* ═══════════════════════════════════════════════════════════════════════
-           FILE CARD LOADING STATE
-           ═══════════════════════════════════════════════════════════════════════ */
-        .file-card {
-            background: #f8fafc;
-            border-radius: 10px;
-            padding: 16px;
-            transition: all 0.3s ease;
-            border: 1px solid #e2e8f0;
+        .logo h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, var(--saffron) 0%, var(--saffron-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
-        
-        .file-card.uploading {
-            border-color: var(--accent);
-            background: #eff6ff;
+
+        .logo span {
+            display: block;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            font-weight: 400;
+            letter-spacing: 0.5px;
         }
-        
-        .file-card.success {
-            border-color: var(--success);
-            background: #f0fdf4;
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
         }
-        
-        .file-card.error {
-            border-color: var(--danger);
-            background: #fef2f2;
-        }
-        
-        .file-card-progress {
-            margin-top: 12px;
-        }
-        
-        .file-status {
+
+        .stat-badge {
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 13px;
-            margin-top: 8px;
+            padding: 8px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            font-size: 0.85rem;
         }
-        
-        .file-status.uploading { color: var(--accent); }
-        .file-status.success { color: var(--success); }
-        .file-status.error { color: var(--danger); }
 
-        /* ═══════════════════════════════════════════════════════════════════════
-           STANDARD COMPONENT STYLES
-           ═══════════════════════════════════════════════════════════════════════ */
-        .concept-tag {
-            background: #e0f2fe;
-            color: #0369a1;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 500;
-            cursor: help;
-            display: inline-block;
-            margin: 2px;
-            transition: all 0.2s ease;
-        }
-        
-        .concept-tag:hover {
-            background: #bae6fd;
-            transform: translateY(-1px);
-        }
-        
-        .citation-tag {
-            background: #fef3c7;
-            color: #92400e;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 500;
-            display: inline-block;
-            margin: 2px;
-        }
-        
-        .doc-type-tag {
-            background: #f0fdf4;
-            color: #166534;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 10px;
+        .stat-badge .value {
             font-weight: 600;
-            text-transform: uppercase;
-        }
-        
-        .source-card {
-            background: #f8fafc;
-            border-left: 4px solid var(--secondary);
-            transition: all 0.2s ease;
-        }
-        
-        .source-card:hover {
-            background: #f1f5f9;
-            transform: translateX(4px);
-        }
-        
-        .doc-card {
-            background: #f1f5f9;
-            border-radius: 8px;
-            padding: 12px;
-            transition: all 0.2s ease;
-        }
-        
-        .doc-card:hover {
-            background: #e2e8f0;
+            color: var(--saffron);
         }
 
-        /* Animations */
-        .fade-in {
-            animation: fadeIn 0.3s ease-out;
+        .stat-badge .label {
+            color: var(--text-muted);
         }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .slide-in {
-            animation: slideIn 0.4s ease-out;
-        }
-        
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(-20px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-        
-        .pulse {
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-        
-        /* Drop Zone */
-        .drop-zone {
-            border: 2px dashed #cbd5e1;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        
-        .drop-zone:hover {
-            border-color: var(--accent);
-            background: #f8fafc;
-        }
-        
-        .drop-zone.drag-over {
-            border-color: var(--accent);
-            background: #eff6ff;
-            transform: scale(1.02);
-        }
-        
-        /* Form Elements */
-        textarea:focus, input:focus, select:focus {
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
-            border-color: var(--accent);
-        }
-        
-        /* Buttons */
-        .btn {
-            transition: all 0.2s ease;
-            font-weight: 500;
-            cursor: pointer;
-        }
-        
-        .btn:hover:not(:disabled) {
-            transform: translateY(-1px);
-        }
-        
-        .btn:active:not(:disabled) {
-            transform: translateY(0);
-        }
-        
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-        
-        .btn-primary {
-            background: var(--accent);
-            color: white;
-        }
-        
-        .btn-primary:hover:not(:disabled) {
-            background: #2563eb;
-        }
-        
-        .btn-success {
-            background: var(--success);
-            color: white;
-        }
-        
-        .btn-success:hover:not(:disabled) {
-            background: #059669;
-        }
-        
-        /* Tabs */
-        .tab {
-            padding: 10px 20px;
-            border-bottom: 2px solid transparent;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-weight: 500;
-            color: #6b7280;
-        }
-        
-        .tab:hover {
-            color: var(--accent);
-        }
-        
-        .tab.active {
-            border-bottom-color: var(--accent);
-            color: var(--accent);
-        }
-        
-        /* Tooltip */
-        .tooltip {
-            position: relative;
-        }
-        
-        .tooltip::after {
-            content: attr(data-tip);
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #1f2937;
-            color: white;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 12px;
-            white-space: nowrap;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.2s ease;
-            z-index: 100;
-        }
-        
-        .tooltip:hover::after {
-            opacity: 1;
-            visibility: visible;
-            bottom: calc(100% + 5px);
-        }
-        
-        /* Scrollbar */
-        ::-webkit-scrollbar {
+
+        .status-dot {
             width: 8px;
             height: 8px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: #f1f5f9;
-            border-radius: 4px;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 4px;
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
-        
-        /* Checkmark Animation */
-        .checkmark {
-            width: 40px;
-            height: 40px;
             border-radius: 50%;
+            background: var(--accent-emerald);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.1); }
+        }
+
+        .clear-btn {
+            padding: 8px 16px;
+            background: transparent;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 50px;
+            color: var(--accent-red);
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .clear-btn:hover {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: var(--accent-red);
+        }
+
+        /* Hero */
+        .hero {
+            padding: 60px 0 40px;
+            text-align: center;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(255, 153, 51, 0.1);
+            border: 1px solid rgba(255, 153, 51, 0.2);
+            border-radius: 50px;
+            font-size: 0.85rem;
+            color: var(--saffron);
+            margin-bottom: 24px;
+        }
+
+        .hero h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 5vw, 3rem);
+            line-height: 1.2;
+            margin-bottom: 16px;
+        }
+
+        .hero h2 .gradient {
+            background: linear-gradient(135deg, var(--saffron) 0%, var(--saffron-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Notice Banner */
+        .notice {
+            background: rgba(255, 153, 51, 0.1);
+            border: 1px solid rgba(255, 153, 51, 0.2);
+            border-radius: var(--radius);
+            padding: 16px 20px;
+            margin: 0 auto 40px;
+            max-width: 800px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            font-size: 0.9rem;
+        }
+
+        .notice i {
+            color: var(--saffron);
+            margin-top: 2px;
+        }
+
+        .notice-content strong {
+            color: var(--saffron);
+        }
+
+        .notice-content ul {
+            margin: 8px 0 0 0;
+            padding-left: 20px;
+            color: var(--text-secondary);
+        }
+
+        .notice-content li {
+            margin: 4px 0;
+        }
+
+        /* Main Grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 900px) {
+            .main-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Card */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            border-color: rgba(255, 153, 51, 0.3);
+            box-shadow: var(--shadow);
+        }
+
+        .card-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .card-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .card-icon.saffron {
+            background: rgba(255, 153, 51, 0.15);
+            color: var(--saffron);
+        }
+
+        .card-icon.green {
+            background: rgba(19, 136, 8, 0.15);
+            color: var(--green-light);
+        }
+
+        .card-header h3 {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .card-header span {
             display: block;
-            stroke-width: 3;
-            stroke: var(--success);
-            stroke-miterlimit: 10;
-            box-shadow: inset 0px 0px 0px var(--success);
-            animation: checkmark-fill 0.4s ease-in-out 0.4s forwards, checkmark-scale 0.3s ease-in-out 0.9s both;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 400;
         }
-        
-        .checkmark-circle {
-            stroke-dasharray: 166;
-            stroke-dashoffset: 166;
-            stroke-width: 3;
-            stroke-miterlimit: 10;
-            stroke: var(--success);
-            fill: none;
-            animation: checkmark-stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+
+        .card-body {
+            padding: 24px;
         }
-        
-        .checkmark-check {
-            transform-origin: 50% 50%;
-            stroke-dasharray: 48;
-            stroke-dashoffset: 48;
-            animation: checkmark-stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+
+        /* Upload Zone */
+        .upload-zone {
+            border: 2px dashed rgba(255, 153, 51, 0.3);
+            border-radius: var(--radius);
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            background: rgba(255, 153, 51, 0.02);
         }
-        
-        @keyframes checkmark-stroke {
-            100% { stroke-dashoffset: 0; }
+
+        .upload-zone:hover,
+        .upload-zone.dragover {
+            border-color: var(--saffron);
+            background: rgba(255, 153, 51, 0.05);
         }
-        
-        @keyframes checkmark-scale {
-            0%, 100% { transform: none; }
-            50% { transform: scale3d(1.1, 1.1, 1); }
+
+        .upload-zone.uploading {
+            opacity: 0.7;
+            pointer-events: none;
         }
-        
-        @keyframes checkmark-fill {
-            100% { box-shadow: inset 0px 0px 0px 30px #f0fdf4; }
+
+        .upload-icon {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 16px;
+            background: rgba(255, 153, 51, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: var(--saffron);
+        }
+
+        .upload-zone h4 {
+            font-size: 1rem;
+            margin-bottom: 8px;
+        }
+
+        .upload-zone p {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-bottom: 16px;
+        }
+
+        .format-tags {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .format-tag {
+            padding: 4px 12px;
+            background: var(--bg-tertiary);
+            border-radius: 50px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        #fileInput { display: none; }
+
+        /* Files List */
+        .files-list {
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius);
+            margin-bottom: 8px;
+        }
+
+        .file-icon {
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 153, 51, 0.2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--saffron);
+            font-size: 0.9rem;
+        }
+
+        .file-info { flex: 1; }
+
+        .file-name {
+            font-size: 0.85rem;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 180px;
+        }
+
+        .file-meta {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .file-status {
+            padding: 4px 10px;
+            border-radius: 50px;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+
+        .file-status.success {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent-emerald);
+        }
+
+        .file-status.error {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--accent-red);
+        }
+
+        .file-status.loading {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--accent-blue);
+        }
+
+        /* Question Form */
+        .question-form {
+            display: flex;
+            gap: 12px;
+        }
+
+        .input-group {
+            flex: 1;
+            position: relative;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .question-input {
+            width: 100%;
+            padding: 14px 16px 14px 44px;
+            background: var(--bg-tertiary);
+            border: 2px solid transparent;
+            border-radius: var(--radius);
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
+
+        .question-input:focus {
+            outline: none;
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(19, 136, 8, 0.1);
+        }
+
+        .question-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .submit-btn {
+            padding: 14px 28px;
+            background: linear-gradient(135deg, var(--green) 0%, var(--green-light) 100%);
+            border: none;
+            border-radius: var(--radius);
+            color: white;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(19, 136, 8, 0.3);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .submit-btn .spinner {
+            display: none;
+            animation: spin 1s linear infinite;
+        }
+
+        .submit-btn.loading .spinner { display: inline-block; }
+        .submit-btn.loading .btn-text { display: none; }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Sample Questions */
+        .sample-questions {
+            margin-top: 20px;
+        }
+
+        .sample-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .sample-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .sample-btn {
+            padding: 8px 14px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .sample-btn:hover {
+            border-color: var(--green);
+            color: var(--text-primary);
+            background: rgba(19, 136, 8, 0.1);
+        }
+
+        /* Answer Section */
+        .answer-section {
+            margin-bottom: 60px;
+        }
+
+        /* Loading State */
+        .loading-state {
+            display: none;
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .loading-state.active { display: block; }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto 20px;
+            border: 3px solid var(--bg-tertiary);
+            border-top-color: var(--saffron);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .loading-state p {
+            color: var(--text-secondary);
+        }
+
+        /* Answer Card */
+        .answer-card {
+            display: none;
+            background: linear-gradient(135deg, rgba(19, 136, 8, 0.08) 0%, rgba(255, 153, 51, 0.08) 100%);
+            border: 1px solid rgba(19, 136, 8, 0.2);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .answer-card.visible { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .answer-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .answer-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .answer-title i {
+            color: var(--green-light);
+        }
+
+        .confidence-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .confidence-badge.high {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent-emerald);
+        }
+
+        .confidence-badge.medium {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--accent-amber);
+        }
+
+        .confidence-badge.low {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--accent-red);
+        }
+
+        .answer-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: var(--radius);
+            border-left: 4px solid var(--green);
+            margin-bottom: 24px;
+        }
+
+        /* Metadata Grid */
+        .metadata-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .metadata-card {
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: var(--radius);
+            padding: 16px;
+        }
+
+        .metadata-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .tag {
+            padding: 4px 10px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            border-left: 3px solid var(--accent-blue);
+        }
+
+        .tag.act { border-color: var(--saffron); }
+        .tag.court { border-color: var(--accent-purple); }
+        .tag.concept { border-color: var(--green-light); }
+        .tag.section { border-color: var(--accent-blue); }
+
+        /* Sources */
+        .sources-section {
+            margin-top: 24px;
+        }
+
+        .sources-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .source-item {
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: var(--radius);
+            padding: 14px;
+            margin-bottom: 10px;
+        }
+
+        .source-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .source-name {
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .source-name i {
+            color: var(--saffron);
+        }
+
+        .source-score {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .source-preview {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            font-style: italic;
+        }
+
+        .processing-time {
+            margin-top: 16px;
+            text-align: right;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Footer */
+        .footer {
+            padding: 30px 0;
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .footer p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .footer-links {
+            margin-top: 12px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: var(--saffron);
+        }
+
+        /* Toast */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            padding: 14px 20px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 300px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .toast.success { border-left: 4px solid var(--accent-emerald); }
+        .toast.error { border-left: 4px solid var(--accent-red); }
+        .toast.info { border-left: 4px solid var(--accent-blue); }
+
+        .toast-icon { font-size: 1.2rem; }
+        .toast.success .toast-icon { color: var(--accent-emerald); }
+        .toast.error .toast-icon { color: var(--accent-red); }
+        .toast.info .toast-icon { color: var(--accent-blue); }
+
+        .toast-message { flex: 1; font-size: 0.9rem; }
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header-content { justify-content: center; }
+            .header-actions { width: 100%; justify-content: center; }
+            .question-form { flex-direction: column; }
+            .submit-btn { width: 100%; justify-content: center; }
+            .hero { padding: 40px 0 30px; }
+            .notice { flex-direction: column; }
         }
     </style>
 </head>
+<body>
+    <div class="bg-gradient"></div>
+    <div class="toast-container" id="toastContainer"></div>
 
-<body class="min-h-screen">
-    <!-- ═══════════════════════════════════════════════════════════════════════
-         UPLOAD OVERLAY MODAL
-         ═══════════════════════════════════════════════════════════════════════ -->
-    <div id="upload-overlay" class="upload-overlay">
-        <div class="upload-modal">
-            <!-- Processing Animation -->
-            <div id="processing-animation" class="doc-processing">
-                <div class="doc-icon-animated">
-                    <div class="page"></div>
-                    <div class="page"></div>
-                    <div class="page"></div>
-                    <div class="scan-line"></div>
-                </div>
-                
-                <h3 id="processing-title" class="text-xl font-semibold text-gray-800 mt-4">
-                    Processing Documents...
-                </h3>
-                
-                <p id="processing-subtitle" class="text-gray-500 text-sm">
-                    Extracting text and creating embeddings
-                </p>
-                
-                <!-- Progress Bar -->
-                <div class="w-full mt-4">
-                    <div class="upload-progress-container">
-                        <div id="upload-progress-bar" class="upload-progress-bar" style="width: 0%"></div>
-                    </div>
-                    <div class="flex justify-between mt-2 text-xs text-gray-500">
-                        <span id="progress-text">0%</span>
-                        <span id="progress-file">File 0 of 0</span>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">⚖️</div>
+                    <div>
+                        <h1>LegalMind AI</h1>
+                        <span>Indian Legal Document Simplifier</span>
                     </div>
                 </div>
-                
-                <!-- Processing Steps -->
-                <div class="processing-steps mt-6">
-                    <div id="step-extract" class="step pending">
-                        <div class="step-icon">1</div>
-                        <span class="step-text">Extracting text from document</span>
+                <div class="header-actions">
+                    <div class="stat-badge">
+                        <span class="value" id="docCount">0</span>
+                        <span class="label">Chunks</span>
                     </div>
-                    <div id="step-chunk" class="step pending">
-                        <div class="step-icon">2</div>
-                        <span class="step-text">Chunking into sections</span>
+                    <div class="stat-badge">
+                        <div class="status-dot" id="statusDot"></div>
+                        <span class="label">Online</span>
                     </div>
-                    <div id="step-embed" class="step pending">
-                        <div class="step-icon">3</div>
-                        <span class="step-text">Creating embeddings</span>
-                    </div>
-                    <div id="step-index" class="step pending">
-                        <div class="step-icon">4</div>
-                        <span class="step-text">Indexing for search</span>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Success State -->
-            <div id="success-animation" class="hidden text-center py-8">
-                <svg class="checkmark mx-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-                    <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
-                    <path class="checkmark-check" fill="none" d="m14.1 27.2 7.1 7.2 16.7-16.8"/>
-                </svg>
-                <h3 class="text-xl font-semibold text-gray-800 mt-6">Upload Complete!</h3>
-                <p id="success-message" class="text-gray-500 text-sm mt-2">
-                    Documents processed successfully
-                </p>
-                <button onclick="closeUploadOverlay()" class="btn btn-primary px-6 py-2 rounded-lg mt-6">
-                    Continue
-                </button>
-            </div>
-            
-            <!-- Error State -->
-            <div id="error-animation" class="hidden text-center py-8">
-                <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto">
-                    <span class="text-3xl">❌</span>
-                </div>
-                <h3 class="text-xl font-semibold text-gray-800 mt-6">Upload Failed</h3>
-                <p id="error-message" class="text-red-600 text-sm mt-2">
-                    An error occurred during processing
-                </p>
-                <button onclick="closeUploadOverlay()" class="btn bg-gray-200 hover:bg-gray-300 px-6 py-2 rounded-lg mt-6">
-                    Close
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ═══════════════════════════════════════════════════════════════════════
-         HEADER
-         ═══════════════════════════════════════════════════════════════════════ -->
-    <header class="gradient-bg text-white py-6 px-4 shadow-lg">
-        <div class="max-w-6xl mx-auto">
-            <div class="flex items-center justify-between flex-wrap gap-4">
-                <div>
-                    <h1 class="text-2xl md:text-3xl font-bold flex items-center gap-3">
-                        <span class="text-3xl">🏛️</span>
-                        <span>LegalMind India</span>
-                    </h1>
-                    <p class="text-blue-100 mt-1 text-sm md:text-base">
-                        AI-Powered Indian Legal Document Assistant
-                    </p>
-                </div>
-                <div class="text-right">
-                    <div class="flex items-center gap-2 text-sm">
-                        <span id="status-dot" class="w-2 h-2 bg-green-400 rounded-full pulse"></span>
-                        <span id="status-text">Ready</span>
-                    </div>
-                    <div class="text-blue-200 text-xs mt-1" id="stats-display">
-                        0 documents • 0 chunks
-                    </div>
+                    <button class="clear-btn" onclick="clearAllData()">
+                        <i class="fas fa-trash-alt"></i>
+                        Clear
+                    </button>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- ═══════════════════════════════════════════════════════════════════════
-         MAIN CONTENT
-         ═══════════════════════════════════════════════════════════════════════ -->
-    <main class="max-w-6xl mx-auto px-4 py-8 space-y-6">
-        
-        <!-- Upload Section -->
-        <section class="card p-6">
-            <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                <span>📤</span>
-                <span>Upload Legal Documents</span>
-            </h2>
-            
-            <!-- Tabs -->
-            <div class="flex border-b border-gray-200 mb-4">
-                <button id="tab-file" onclick="switchTab('file')" class="tab active">
-                    📁 File Upload
-                </button>
-                <button id="tab-text" onclick="switchTab('text')" class="tab">
-                    📝 Paste Text
-                </button>
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-badge">
+                <i class="fas fa-robot"></i>
+                RAG + Hybrid Search + Indian Legal NER
             </div>
-            
-            <!-- File Upload Panel -->
-            <div id="panel-file" class="fade-in">
-                <div id="drop-zone" class="drop-zone rounded-lg p-8 text-center">
-                    <div class="text-5xl mb-4">📄</div>
-                    <p class="text-gray-600 mb-2 font-medium text-lg">
-                        Drag & drop files here or click to browse
-                    </p>
-                    <p class="text-gray-400 text-sm">
-                        Supports: PDF, DOCX, DOC, TXT, RTF (Max 10MB per file)
-                    </p>
-                    <input type="file" id="file-input" class="hidden" 
-                           accept=".pdf,.docx,.doc,.txt,.rtf" multiple>
-                </div>
-                
-                <!-- Selected Files List -->
-                <div id="file-list" class="mt-4 space-y-3"></div>
-                
-                <!-- Upload Button -->
-                <button id="upload-files-btn" onclick="uploadFiles()" 
-                        class="btn btn-primary mt-4 px-6 py-3 rounded-lg hidden items-center gap-2">
-                    <span>📤 Upload Selected Files</span>
-                    <span id="upload-files-loader" class="spinner hidden"></span>
-                </button>
-            </div>
-            
-            <!-- Text Upload Panel -->
-            <div id="panel-text" class="hidden fade-in">
-                <textarea id="doc-input" 
-                          class="w-full p-4 border border-gray-200 rounded-lg h-40 text-sm resize-none"
-                          placeholder="Paste your legal document text here (judgment, contract, statute, petition, etc.)..."></textarea>
-                <div class="flex flex-col sm:flex-row gap-4 mt-4">
-                    <input type="text" id="doc-name" 
-                           class="flex-1 p-3 border border-gray-200 rounded-lg"
-                           placeholder="Document name (e.g., contract.txt)">
-                    <button id="upload-text-btn" onclick="uploadText()" 
-                            class="btn btn-primary px-6 py-3 rounded-lg flex items-center justify-center gap-2">
-                        <span>📤 Upload Text</span>
-                        <span id="upload-text-loader" class="spinner hidden"></span>
-                    </button>
-                </div>
-            </div>
-            
-            <!-- Upload Result (inline) -->
-            <div id="upload-result" class="mt-4 hidden"></div>
-            
-            <!-- Uploaded Documents List -->
-            <div id="documents-section" class="mt-6 hidden">
-                <div class="flex justify-between items-center mb-3">
-                    <h3 class="font-medium text-gray-700 flex items-center gap-2">
-                        <span>📚</span>
-                        <span>Uploaded Documents</span>
-                        <span id="doc-count-badge" class="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full">0</span>
-                    </h3>
-                    <button onclick="clearAllDocuments()" 
-                            class="text-red-600 hover:text-red-700 text-sm font-medium flex items-center gap-1">
-                        <span>🗑️</span>
-                        <span>Clear All</span>
-                    </button>
-                </div>
-                <div id="documents-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"></div>
-            </div>
-        </section>
+            <h2>Understand <span class="gradient">Indian Legal Documents</span><br>in Plain English</h2>
+            <p>Upload contracts, court judgments, or legal agreements. Ask questions and get clear, simplified answers with source references.</p>
+        </div>
+    </section>
 
-        <!-- Question Section -->
-        <section class="card p-6">
-            <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                <span>❓</span>
-                <span>Ask a Legal Question</span>
-            </h2>
-            
-            <div class="flex flex-col md:flex-row gap-4">
-                <input type="text" id="question-input"
-                       class="flex-1 p-4 border border-gray-200 rounded-lg text-lg"
-                       placeholder="e.g., What is the punishment for murder under IPC?"
-                       onkeypress="if(event.key === 'Enter') askQuestion()">
-                <button id="ask-btn" onclick="askQuestion()"
-                        class="btn btn-success px-8 py-4 rounded-lg flex items-center justify-center gap-2 text-lg">
-                    <span>🔍 Ask</span>
-                    <span id="ask-loader" class="spinner hidden"></span>
-                </button>
+    <!-- Notice -->
+    <div class="container">
+        <div class="notice">
+            <i class="fas fa-info-circle"></i>
+            <div class="notice-content">
+                <strong>Free Tier Limits:</strong>
+                <ul>
+                    <li>Max 25 documents or 300 text chunks</li>
+                    <li>Files up to 5MB (PDF, DOCX, TXT)</li>
+                    <li>Data resets after 15 min of inactivity</li>
+                </ul>
             </div>
-            
-            <!-- Quick Questions -->
-            <div class="mt-4 flex flex-wrap gap-2 items-center">
-                <span class="text-sm text-gray-500">Quick:</span>
-                <button onclick="setQuestion('What is anticipatory bail?')" class="text-sm text-blue-600 hover:underline">Anticipatory bail</button>
-                <span class="text-gray-300">•</span>
-                <button onclick="setQuestion('What is Section 302 of IPC?')" class="text-sm text-blue-600 hover:underline">Section 302</button>
-                <span class="text-gray-300">•</span>
-                <button onclick="setQuestion('What are fundamental rights?')" class="text-sm text-blue-600 hover:underline">Fundamental rights</button>
-                <span class="text-gray-300">•</span>
-                <button onclick="setQuestion('What is habeas corpus?')" class="text-sm text-blue-600 hover:underline">Habeas corpus</button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="container">
+        <div class="main-grid">
+            <!-- Upload Card -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon saffron">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <div>
+                        <h3>Upload Documents</h3>
+                        <span>Legal PDFs, contracts, judgments</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="upload-zone" id="uploadZone">
+                        <input type="file" id="fileInput" accept=".pdf,.docx,.txt" multiple>
+                        <div class="upload-icon">
+                            <i class="fas fa-file-upload"></i>
+                        </div>
+                        <h4>Drag & drop files or click to browse</h4>
+                        <p>Supports Indian legal documents, contracts, court orders</p>
+                        <div class="format-tags">
+                            <span class="format-tag">PDF</span>
+                            <span class="format-tag">DOCX</span>
+                            <span class="format-tag">TXT</span>
+                        </div>
+                    </div>
+                    <div class="files-list" id="filesList"></div>
+                </div>
             </div>
-        </section>
+                        <!-- Question Card -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon green">
+                        <i class="fas fa-question-circle"></i>
+                    </div>
+                    <div>
+                        <h3>Ask a Question</h3>
+                        <span>Get simplified legal answers</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form class="question-form" id="questionForm">
+                        <div class="input-group">
+                            <i class="fas fa-search"></i>
+                            <input type="text" 
+                                   class="question-input" 
+                                   id="questionInput" 
+                                   placeholder="e.g., What are the termination conditions?"
+                                   maxlength="500"
+                                   autocomplete="off">
+                        </div>
+                        <button type="submit" class="submit-btn" id="submitBtn">
+                            <i class="fas fa-spinner spinner"></i>
+                            <span class="btn-text"><i class="fas fa-paper-plane"></i> Ask</span>
+                        </button>
+                    </form>
+
+                    <div class="sample-questions">
+                        <div class="sample-label">💡 Try asking:</div>
+                        <div class="sample-list">
+                            <button type="button" class="sample-btn" data-q="What are the main obligations in this document?">
+                                Main obligations
+                            </button>
+                            <button type="button" class="sample-btn" data-q="What happens if there is a breach of contract?">
+                                Breach consequences
+                            </button>
+                            <button type="button" class="sample-btn" data-q="What are the termination conditions?">
+                                Termination
+                            </button>
+                            <button type="button" class="sample-btn" data-q="What is the dispute resolution mechanism?">
+                                Dispute resolution
+                            </button>
+                            <button type="button" class="sample-btn" data-q="What penalties are mentioned?">
+                                Penalties
+                            </button>
+                            <button type="button" class="sample-btn" data-q="What are the payment terms?">
+                                Payment terms
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- Answer Section -->
-        <section id="answer-section" class="card p-6 hidden fade-in">
-            <!-- Header -->
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
-                <h2 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
-                    <span>📋</span>
-                    <span>Answer</span>
-                </h2>
-                <div class="flex items-center gap-4 text-sm">
-                    <span id="confidence-display" class="px-3 py-1 rounded-full font-medium"></span>
-                    <span id="time-display" class="text-gray-400"></span>
-                </div>
+        <div class="answer-section">
+            <!-- Loading State -->
+            <div class="loading-state" id="loadingState">
+                <div class="loading-spinner"></div>
+                <p>Analyzing documents and generating answer...</p>
             </div>
-            
-            <!-- Loading State for Answer -->
-            <div id="answer-loading" class="hidden py-8 text-center">
-                <div class="bar-loading mx-auto mb-4">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-                <p class="text-gray-500">Analyzing documents and generating answer...</p>
-            </div>
-            
-            <!-- Answer Content -->
-            <div id="answer-content">
-                <div id="answer-text" class="text-gray-700 text-lg leading-relaxed mb-4 p-4 bg-blue-50 rounded-lg border-l-4 border-blue-500"></div>
-                
-                <div id="simplified-section" class="hidden mb-4 slide-in">
-                    <h3 class="font-medium text-gray-700 mb-2 flex items-center gap-2">
-                        <span>✨</span>
-                        <span>Simplified Explanation:</span>
-                    </h3>
-                    <div id="simplified-text" class="text-gray-600 p-4 bg-green-50 rounded-lg border-l-4 border-green-500"></div>
-                </div>
-                
-                <div class="grid md:grid-cols-2 gap-4 mb-4">
-                    <div id="concepts-section" class="hidden">
-                        <h3 class="font-medium text-gray-700 mb-2 flex items-center gap-2">
-                            <span>📚</span>
-                            <span>Legal Concepts:</span>
-                        </h3>
-                        <div id="concepts-list" class="flex flex-wrap gap-1"></div>
-                    </div>
-                    <div id="citations-section" class="hidden">
-                        <h3 class="font-medium text-gray-700 mb-2 flex items-center gap-2">
-                            <span>📖</span>
-                            <span>Citations:</span>
-                        </h3>
-                        <div id="citations-list" class="flex flex-wrap gap-1"></div>
-                    </div>
-                </div>
-                
-                <div id="sources-section" class="hidden">
-                    <h3 class="font-medium text-gray-700 mb-3 flex items-center gap-2">
-                        <span>📄</span>
-                        <span>Sources:</span>
-                    </h3>
-                    <div id="sources-list" class="space-y-3"></div>
-                </div>
-            </div>
-        </section>
 
-        <!-- Sample Documents -->
-        <section class="card p-6">
-            <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                <span>📚</span>
-                <span>Sample Documents</span>
-            </h2>
-            <p class="text-gray-500 text-sm mb-4">Load sample Indian legal documents for testing:</p>
-            <div class="flex flex-wrap gap-3">
-                <button onclick="loadSample('ipc302')" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm transition flex items-center gap-2">
-                    <span>⚖️</span> IPC Section 302
-                </button>
-                <button onclick="loadSample('bail')" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm transition flex items-center gap-2">
-                    <span>🔓</span> Bail Provisions
-                </button>
-                <button onclick="loadSample('fundamental')" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm transition flex items-center gap-2">
-                    <span>📜</span> Fundamental Rights
-                </button>
-                <button onclick="loadSample('contract')" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm transition flex items-center gap-2">
-                    <span>📝</span> Contract Agreement
-                </button>
-            </div>
-        </section>
+            <!-- Answer Card -->
+            <div class="answer-card" id="answerCard">
+                <div class="answer-header">
+                    <div class="answer-title">
+                        <i class="fas fa-lightbulb"></i>
+                        <span>Answer</span>
+                    </div>
+                    <div class="confidence-badge" id="confidenceBadge">
+                        <i class="fas fa-chart-line"></i>
+                        <span id="confidenceText">0% confidence</span>
+                    </div>
+                </div>
 
-        <!-- Info Section -->
-        <section class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6">
-            <h3 class="text-lg font-semibold text-gray-800 mb-4">ℹ️ How LegalMind Works</h3>
-            <div class="grid md:grid-cols-3 gap-6">
-                <div class="flex items-start gap-3">
-                    <span class="text-3xl">1️⃣</span>
-                    <div>
-                        <strong class="text-gray-800 block">Upload Documents</strong>
-                        <p class="text-gray-600 text-sm mt-1">Upload legal documents (PDF, DOCX, TXT) or paste text.</p>
-                    </div>
+                <div class="answer-content" id="answerContent"></div>
+
+                <!-- Metadata Grid -->
+                <div class="metadata-grid" id="metadataGrid"></div>
+
+                <!-- Obligations Section -->
+                <div class="metadata-card" id="obligationsSection" style="display: none; margin-bottom: 24px;">
+                    <div class="metadata-title">📋 Legal Obligations Found</div>
+                    <div id="obligationsContent"></div>
                 </div>
-                <div class="flex items-start gap-3">
-                    <span class="text-3xl">2️⃣</span>
-                    <div>
-                        <strong class="text-gray-800 block">Ask Questions</strong>
-                        <p class="text-gray-600 text-sm mt-1">Ask questions in plain English about your documents.</p>
+
+                <!-- Sources -->
+                <div class="sources-section">
+                    <div class="sources-title">
+                        <i class="fas fa-book-open"></i>
+                        Sources Used
                     </div>
+                    <div id="sourcesList"></div>
                 </div>
-                <div class="flex items-start gap-3">
-                    <span class="text-3xl">3️⃣</span>
-                    <div>
-                        <strong class="text-gray-800 block">Get Answers</strong>
-                        <p class="text-gray-600 text-sm mt-1">Receive simplified answers with legal terms explained.</p>
-                    </div>
-                </div>
+
+                <div class="processing-time" id="processingTime"></div>
             </div>
-        </section>
+        </div>
     </main>
 
     <!-- Footer -->
-    <footer class="text-center py-6 text-gray-500 text-sm border-t border-gray-200 mt-8">
-        <p>Built with 🤖 InLegalBERT + RAG Architecture</p>
-        <p class="text-xs mt-1">Supports PDF, DOCX, TXT • Optimized for Indian Legal Documents</p>
+    <footer class="footer">
+        <div class="container">
+            <p>🇮🇳 Indian Legal Document Simplifier | Making law accessible to everyone</p>
+            <div class="footer-links">
+                <a href="#" onclick="showAbout()">About</a>
+                <a href="#" onclick="showPrivacy()">Privacy</a>
+                <a href="https://github.com" target="_blank">GitHub</a>
+            </div>
+        </div>
     </footer>
 
-    <!-- ═══════════════════════════════════════════════════════════════════════
-         JAVASCRIPT
-         ═══════════════════════════════════════════════════════════════════════ -->
     <script>
         // ═══════════════════════════════════════════════════════════════════════
-        // SAMPLE DOCUMENTS
+        // CONFIGURATION
         // ═══════════════════════════════════════════════════════════════════════
-        const samples = {
-            ipc302: {
-                name: 'IPC_Section_302.txt',
-                text: `INDIAN PENAL CODE - SECTION 302
+        
+        const API_BASE = '';
+        const POLL_INTERVAL = 30000; // 30 seconds
+        
+        // ═══════════════════════════════════════════════════════════════════════
+        // UTILITY FUNCTIONS
+        // ═══════════════════════════════════════════════════════════════════════
+        
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const icons = {
+                success: 'fa-check-circle',
+                error: 'fa-exclamation-circle',
+                info: 'fa-info-circle'
+            };
+            
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <i class="fas ${icons[type]} toast-icon"></i>
+                <span class="toast-message">${message}</span>
+                <button class="toast-close" onclick="this.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            
+            container.appendChild(toast);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.style.animation = 'slideIn 0.3s ease reverse';
+                    setTimeout(() => toast.remove(), 300);
+                }
+            }, 5000);
+        }
 
-Section 302 - Punishment for murder.
+        function getConfidenceClass(score) {
+            if (score >= 0.6) return 'high';
+            if (score >= 0.3) return 'medium';
+            return 'low';
+        }
 
-Whoever commits murder shall be punished with death, or imprisonment for life, and shall also be liable to fine.
+        function formatConfidence(score) {
+            return Math.round(score * 100);
+        }
 
-Murder is defined under Section 300 of the Indian Penal Code. The essential ingredients include:
-1. The act must be done with the intention of causing death
-2. The act must be done with the intention of causing such bodily injury as the offender knows to be likely to cause death
-3. The act must be done with the intention of causing bodily injury sufficient in the ordinary course of nature to cause death
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
 
-Related Sections:
-- Section 299: Culpable Homicide
-- Section 300: When culpable homicide is murder
-- Section 304: Punishment for culpable homicide not amounting to murder
-
-In State of AP v. Rayavarapu Punnayya (AIR 1977 SC 45), the Supreme Court held that the distinction between murder and culpable homicide depends upon the degree of probability of death.`
-            },
-            bail: {
-                name: 'Bail_Provisions.txt',
-                text: `BAIL PROVISIONS UNDER INDIAN LAW
-
-Chapter XXXIII of the Code of Criminal Procedure, 1973
-
-1. TYPES OF BAIL:
-
-Regular Bail (Section 437, 439 CrPC):
-Bail granted to a person in judicial custody. Court considers nature of accusation, severity of punishment, character of accused.
-
-Anticipatory Bail (Section 438 CrPC):
-Direction to release on bail before arrest. High Court or Sessions Court may grant when person apprehends arrest for non-bailable offence.
-
-The Supreme Court in Sushila Aggarwal v. State (2020) 5 SCC 1 held anticipatory bail can be granted without time limit.
-
-2. BAILABLE vs NON-BAILABLE:
-
-Bailable Offence (Section 436): Accused has RIGHT to bail
-Non-Bailable Offence (Section 437): Bail is at court's DISCRETION`
-            },
-            fundamental: {
-                name: 'Fundamental_Rights.txt',
-                text: `FUNDAMENTAL RIGHTS - CONSTITUTION OF INDIA
-PART III (Articles 12-35)
-
-Article 14 - Equality before law
-The State shall not deny equality before law or equal protection of laws.
-
-Article 19 - Freedom of speech
-All citizens have the right to freedom of speech and expression, assemble peaceably, form associations, move freely, reside anywhere, practice any profession.
-
-Article 21 - Right to life and liberty
-No person shall be deprived of life or personal liberty except according to procedure established by law.
-
-In Maneka Gandhi v. Union of India (AIR 1978 SC 597), Supreme Court expanded Article 21 to include right to live with dignity.
-
-Article 32 - Right to Constitutional Remedies
-Right to move Supreme Court for enforcement of Fundamental Rights. Dr. Ambedkar called it the "heart and soul" of the Constitution.`
-            },
-            contract: {
-                name: 'Contract_Agreement.txt',
-                text: `PROFESSIONAL SERVICES AGREEMENT
-
-This Agreement is made between Party A ("Client") and Party B ("Service Provider").
-
-WHEREAS the Client desires to engage services of the Provider;
-NOW THEREFORE, the parties agree:
-
-1. SCOPE: Provider shall perform services with due diligence and care.
-2. CONSIDERATION: Client shall pay as per Schedule B within 30 days of invoice.
-3. INDEMNIFICATION: Each party shall indemnify the other from claims arising from breach.
-4. LIMITATION: Neither party liable for indirect or consequential damages.
-5. CONFIDENTIALITY: Parties shall maintain confidentiality. Survives for 3 years.
-6. TERMINATION: Either party may terminate with 30 days written notice.
-7. GOVERNING LAW: Governed by laws of India. Courts in [City] have exclusive jurisdiction.
-8. DISPUTE RESOLUTION: Disputes through mediation, then arbitration under Arbitration Act, 1996.`
+        // ═══════════════════════════════════════════════════════════════════════
+        // STATS POLLING
+        // ═══════════════════════════════════════════════════════════════════════
+        
+        async function updateStats() {
+            try {
+                const response = await fetch(`${API_BASE}/api/stats`);
+                const data = await response.json();
+                
+                document.getElementById('docCount').textContent = data.total_chunks || 0;
+                
+                const statusDot = document.getElementById('statusDot');
+                if (data.status === 'operational') {
+                    statusDot.style.background = 'var(--accent-emerald)';
+                } else {
+                    statusDot.style.background = 'var(--accent-amber)';
+                }
+            } catch (error) {
+                console.error('Stats error:', error);
+                document.getElementById('statusDot').style.background = 'var(--accent-red)';
             }
-        };
+        }
+
+        // Initial load and periodic updates
+        updateStats();
+        setInterval(updateStats, POLL_INTERVAL);
 
         // ═══════════════════════════════════════════════════════════════════════
-        // STATE
+        // FILE UPLOAD
         // ═══════════════════════════════════════════════════════════════════════
-        let selectedFiles = [];
-        let uploadedDocuments = [];
-        let currentUploadIndex = 0;
-        let totalFilesToUpload = 0;
+        
+        const uploadZone = document.getElementById('uploadZone');
+        const fileInput = document.getElementById('fileInput');
+        const filesList = document.getElementById('filesList');
+
+        // Click to upload
+        uploadZone.addEventListener('click', () => fileInput.click());
+
+        // Drag and drop
+        uploadZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('dragover');
+        });
+
+        uploadZone.addEventListener('dragleave', () => {
+            uploadZone.classList.remove('dragover');
+        });
+
+        uploadZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('dragover');
+            handleFiles(e.dataTransfer.files);
+        });
+
+        // File input change
+        fileInput.addEventListener('change', (e) => {
+            handleFiles(e.target.files);
+            fileInput.value = ''; // Reset for same file
+        });
+
+        async function handleFiles(files) {
+            for (const file of files) {
+                await uploadFile(file);
+            }
+        }
+
+        async function uploadFile(file) {
+            // Validate file size (5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                showToast(`${file.name} is too large (max 5MB)`, 'error');
+                return;
+            }
+
+            // Validate extension
+            const ext = file.name.split('.').pop().toLowerCase();
+            if (!['pdf', 'docx', 'txt'].includes(ext)) {
+                showToast(`${file.name} has invalid format`, 'error');
+                return;
+            }
+
+            // Create file item UI
+            const fileId = 'file-' + Date.now();
+            const fileItem = document.createElement('div');
+            fileItem.className = 'file-item';
+            fileItem.id = fileId;
+            fileItem.innerHTML = `
+                <div class="file-icon">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <div class="file-info">
+                    <div class="file-name" title="${escapeHtml(file.name)}">${escapeHtml(file.name)}</div>
+                    <div class="file-meta">${(file.size / 1024).toFixed(1)} KB</div>
+                </div>
+                <span class="file-status loading">
+                    <i class="fas fa-spinner fa-spin"></i> Uploading...
+                </span>
+            `;
+            filesList.insertBefore(fileItem, filesList.firstChild);
+
+            // Upload file
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                uploadZone.classList.add('uploading');
+                
+                const response = await fetch(`${API_BASE}/api/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+                const statusEl = fileItem.querySelector('.file-status');
+
+                if (result.success) {
+                    statusEl.className = 'file-status success';
+                    statusEl.innerHTML = `<i class="fas fa-check"></i> ${result.chunks_added} chunks`;
+                    showToast(`${file.name} uploaded successfully!`, 'success');
+                    updateStats();
+                } else {
+                    statusEl.className = 'file-status error';
+                    statusEl.innerHTML = `<i class="fas fa-times"></i> Failed`;
+                    showToast(`Failed: ${result.error || 'Unknown error'}`, 'error');
+                }
+            } catch (error) {
+                console.error('Upload error:', error);
+                const statusEl = fileItem.querySelector('.file-status');
+                statusEl.className = 'file-status error';
+                statusEl.innerHTML = `<i class="fas fa-times"></i> Error`;
+                showToast(`Upload failed: ${error.message}`, 'error');
+            } finally {
+                uploadZone.classList.remove('uploading');
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════════════════
+        // QUESTION HANDLING
+        // ═══════════════════════════════════════════════════════════════════════
+        
+        const questionForm = document.getElementById('questionForm');
+        const questionInput = document.getElementById('questionInput');
+        const submitBtn = document.getElementById('submitBtn');
+        const loadingState = document.getElementById('loadingState');
+        const answerCard = document.getElementById('answerCard');
+
+        // Sample question buttons
+        document.querySelectorAll('.sample-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                questionInput.value = btn.dataset.q;
+                questionForm.dispatchEvent(new Event('submit'));
+            });
+        });
+
+        // Form submission
+        questionForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const question = questionInput.value.trim();
+            
+            if (!question) {
+                showToast('Please enter a question', 'error');
+                questionInput.focus();
+                return;
+            }
+
+            // Show loading state
+            submitBtn.classList.add('loading');
+            submitBtn.disabled = true;
+            loadingState.classList.add('active');
+            answerCard.classList.remove('visible');
+
+            try {
+                const response = await fetch(`${API_BASE}/api/ask`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ question })
+                });
+
+                const result = await response.json();
+                displayAnswer(result);
+
+            } catch (error) {
+                console.error('Ask error:', error);
+                showToast('Failed to get answer. Please try again.', 'error');
+            } finally {
+                submitBtn.classList.remove('loading');
+                submitBtn.disabled = false;
+                loadingState.classList.remove('active');
+            }
+        });
+
+        function displayAnswer(result) {
+            if (!result.success) {
+                showToast(result.answer || result.error || 'Could not find answer', 'error');
+                return;
+            }
+
+            // Show answer card
+            answerCard.classList.add('visible');
+
+            // Main answer
+            document.getElementById('answerContent').textContent = result.answer;
+
+            // Confidence badge
+            const confidence = result.confidence || 0;
+            const badge = document.getElementById('confidenceBadge');
+            badge.className = `confidence-badge ${getConfidenceClass(confidence)}`;
+            document.getElementById('confidenceText').textContent = `${formatConfidence(confidence)}% confidence`;
+
+            // Metadata grid
+            const metadataGrid = document.getElementById('metadataGrid');
+            metadataGrid.innerHTML = '';
+
+            // Concepts
+            if (result.concepts && result.concepts.length > 0) {
+                metadataGrid.innerHTML += `
+                    <div class="metadata-card">
+                        <div class="metadata-title">🏛️ Legal Concepts</div>
+                        <div class="tags">
+                            ${result.concepts.map(c => `<span class="tag concept">${escapeHtml(c)}</span>`).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Entities
+            if (result.entities) {
+                // Courts
+                if (result.entities.courts && result.entities.courts.length > 0) {
+                    metadataGrid.innerHTML += `
+                        <div class="metadata-card">
+                            <div class="metadata-title">⚖️ Courts</div>
+                            <div class="tags">
+                                ${result.entities.courts.map(c => `<span class="tag court">${escapeHtml(c)}</span>`).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // Acts
+                if (result.entities.acts && result.entities.acts.length > 0) {
+                    metadataGrid.innerHTML += `
+                        <div class="metadata-card">
+                            <div class="metadata-title">📜 Acts & Laws</div>
+                            <div class="tags">
+                                ${result.entities.acts.map(a => `<span class="tag act">${escapeHtml(a)}</span>`).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // Sections
+                if (result.entities.sections && result.entities.sections.length > 0) {
+                    metadataGrid.innerHTML += `
+                        <div class="metadata-card">
+                            <div class="metadata-title">📑 Sections</div>
+                            <div class="tags">
+                                ${result.entities.sections.map(s => `<span class="tag section">Section ${escapeHtml(s)}</span>`).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // Dates
+                if (result.entities.dates && result.entities.dates.length > 0) {
+                    metadataGrid.innerHTML += `
+                        <div class="metadata-card">
+                            <div class="metadata-title">📅 Dates</div>
+                            <div class="tags">
+                                ${result.entities.dates.map(d => `<span class="tag">${escapeHtml(d)}</span>`).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // Amounts
+                if (result.entities.amounts && result.entities.amounts.length > 0) {
+                    metadataGrid.innerHTML += `
+                        <div class="metadata-card">
+                            <div class="metadata-title">💰 Monetary Values</div>
+                            <div class="tags">
+                                ${result.entities.amounts.map(a => `<span class="tag">${escapeHtml(a)}</span>`).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            // Obligations
+            const obligationsSection = document.getElementById('obligationsSection');
+            const obligationsContent = document.getElementById('obligationsContent');
+            
+            if (result.obligations && Object.keys(result.obligations).length > 0) {
+                obligationsSection.style.display = 'block';
+                let obligationsHtml = '';
+                
+                const oblLabels = {
+                    mandatory: { icon: '🔴', label: 'Mandatory (shall/must)' },
+                    permissive: { icon: '🟢', label: 'Permissive (may/can)' },
+                    prohibitive: { icon: '⛔', label: 'Prohibited (shall not)' },
+                    conditional: { icon: '🔶', label: 'Conditional (if/unless)' }
+                };
+
+                for (const [type, sentences] of Object.entries(result.obligations)) {
+                    if (sentences && sentences.length > 0) {
+                        const info = oblLabels[type] || { icon: '📌', label: type };
+                        obligationsHtml += `
+                            <div style="margin-bottom: 12px;">
+                                <strong style="color: var(--text-secondary); font-size: 0.8rem;">
+                                    ${info.icon} ${info.label}:
+                                </strong>
+                                <ul style="margin: 6px 0 0 20px; color: var(--text-muted); font-size: 0.85rem;">
+                                    ${sentences.slice(0, 2).map(s => `<li style="margin: 4px 0;">${escapeHtml(s.substring(0, 150))}${s.length > 150 ? '...' : ''}</li>`).join('')}
+                                </ul>
+                            </div>
+                        `;
+                    }
+                }
+                
+                obligationsContent.innerHTML = obligationsHtml;
+            } else {
+                obligationsSection.style.display = 'none';
+            }
+
+            // Sources
+            const sourcesList = document.getElementById('sourcesList');
+            sourcesList.innerHTML = '';
+
+            if (result.sources && result.sources.length > 0) {
+                result.sources.forEach((source, idx) => {
+                    sourcesList.innerHTML += `
+                        <div class="source-item">
+                            <div class="source-header">
+                                <span class="source-name">
+                                    <i class="fas fa-file-alt"></i>
+                                    ${escapeHtml(source.filename)}
+                                </span>
+                                <span class="source-score">
+                                    Relevance: ${Math.round(source.relevance_score * 100)}%
+                                </span>
+                            </div>
+                            <div class="source-preview">"${escapeHtml(source.preview)}"</div>
+                        </div>
+                    `;
+                });
+            } else {
+                sourcesList.innerHTML = '<p style="color: var(--text-muted); font-size: 0.85rem;">No sources available</p>';
+            }
+
+            // Processing time
+            if (result.processing_time) {
+                document.getElementById('processingTime').textContent = 
+                    `⚡ Processed in ${result.processing_time}s`;
+            }
+
+            // Scroll to answer
+            answerCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // ═══════════════════════════════════════════════════════════════════════
+        // CLEAR DATA
+        // ═══════════════════════════════════════════════════════════════════════
+        
+        async function clearAllData() {
+            if (!confirm('Clear all uploaded documents and data?\n\nThis action cannot be undone.')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/api/clear`, {
+                    method: 'POST'
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showToast('All data cleared successfully', 'success');
+                    document.getElementById('filesList').innerHTML = '';
+                    document.getElementById('answerCard').classList.remove('visible');
+                    updateStats();
+                } else {
+                    showToast(`Failed to clear: ${result.error}`, 'error');
+                }
+            } catch (error) {
+                showToast('Failed to clear data', 'error');
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════════════════
+        // ABOUT & PRIVACY MODALS
+        // ═══════════════════════════════════════════════════════════════════════
+        
+        function showAbout() {
+            alert(`🇮🇳 Indian Legal Document Simplifier v2.0
+
+Powered by:
+• RAG (Retrieval Augmented Generation)
+• Hybrid Search (Dense + Keyword)
+• Indian Legal NER
+
+Features:
+• Extract legal entities (Courts, Acts, Sections)
+• Identify obligations (mandatory, permissive, prohibitive)
+• Find relevant sources with confidence scores
+
+Built with ❤️ for accessible legal understanding.`);
+        }
+
+        function showPrivacy() {
+            alert(`🔒 Privacy Policy
+
+• Documents are processed in memory only
+• No data is permanently stored
+• Files are deleted after processing
+• Data is cleared after 15 min of inactivity
+• No personal information is collected
+
+Your documents remain confidential.`);
+        }
+
+        // ═══════════════════════════════════════════════════════════════════════
+        // KEYBOARD SHORTCUTS
+        // ═══════════════════════════════════════════════════════════════════════
+        
+        document.addEventListener('keydown', (e) => {
+            // Ctrl/Cmd + K to focus search
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                questionInput.focus();
+            }
+            
+            // Escape to clear input
+            if (e.key === 'Escape') {
+                questionInput.blur();
+            }
+        });
 
         // ═══════════════════════════════════════════════════════════════════════
         // INITIALIZATION
         // ═══════════════════════════════════════════════════════════════════════
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeDropZone();
-            updateStats();
-            loadDocuments();
+        
+        // Focus input on load
+        window.addEventListener('load', () => {
+            setTimeout(() => questionInput.focus(), 500);
         });
 
-        function initializeDropZone() {
-            const dropZone = document.getElementById('drop-zone');
-            const fileInput = document.getElementById('file-input');
-
-            dropZone.addEventListener('click', () => fileInput.click());
-
-            dropZone.addEventListener('dragover', (e) => {
+        // Warn before leaving with data
+        window.addEventListener('beforeunload', (e) => {
+            const docCount = parseInt(document.getElementById('docCount').textContent);
+            if (docCount > 0) {
                 e.preventDefault();
-                dropZone.classList.add('drag-over');
-            });
-
-            dropZone.addEventListener('dragleave', (e) => {
-                e.preventDefault();
-                dropZone.classList.remove('drag-over');
-            });
-
-            dropZone.addEventListener('drop', (e) => {
-                e.preventDefault();
-                dropZone.classList.remove('drag-over');
-                handleFiles(e.dataTransfer.files);
-            });
-
-            fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
-        }
-
-        // ═══════════════════════════════════════════════════════════════════════
-        // TAB SWITCHING
-        // ═══════════════════════════════════════════════════════════════════════
-        function switchTab(tab) {
-            document.getElementById('tab-file').classList.toggle('active', tab === 'file');
-            document.getElementById('tab-text').classList.toggle('active', tab === 'text');
-            document.getElementById('panel-file').classList.toggle('hidden', tab !== 'file');
-            document.getElementById('panel-text').classList.toggle('hidden', tab !== 'text');
-        }
-
-        // ═══════════════════════════════════════════════════════════════════════
-        // FILE HANDLING
-        // ═══════════════════════════════════════════════════════════════════════
-        function handleFiles(files) {
-            selectedFiles = Array.from(files);
-            renderFileList();
-        }
-
-        function getFileIcon(filename) {
-            const ext = filename.split('.').pop().toLowerCase();
-            const icons = { 'pdf': '📕', 'docx': '📘', 'doc': '📘', 'txt': '📄', 'rtf': '📄' };
-            return icons[ext] || '📄';
-        }
-
-        function formatFileSize(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-        }
-
-        function renderFileList() {
-            const listEl = document.getElementById('file-list');
-            const uploadBtn = document.getElementById('upload-files-btn');
-
-            if (selectedFiles.length === 0) {
-                listEl.innerHTML = '';
-                uploadBtn.classList.add('hidden');
-                return;
+                e.returnValue = '';
             }
+        });
 
-            listEl.innerHTML = selectedFiles.map((file, index) => `
-                <div id="file-card-${index}" class="file-card flex justify-between items-center fade-in">
-                    <div class="flex items-center gap-3">
-                        <span class="text-2xl">${getFileIcon(file.name)}</span>
-                        <div>
-                            <div class="font-medium text-gray-800">${file.name}</div>
-                            <div class="text-gray-400 text-xs">${formatFileSize(file.size)}</div>
-                        </div>
-                    </div>
-                    <button onclick="removeFile(${index})" class="text-red-500 hover:text-red-700 p-2 text-lg">
-                        ✕
-                    </button>
-                </div>
-            `).join('');
-
-            uploadBtn.classList.remove('hidden');
-            uploadBtn.classList.add('flex');
-        }
-
-        function removeFile(index) {
-            selectedFiles.splice(index, 1);
-            renderFileList();
-        }
-
-        // ═══════════════════════════════════════════════════════════════════════
-        // UPLOAD OVERLAY FUNCTIONS
-        // ═══════════════════════════════════════════════════════════════════════
-        function showUploadOverlay() {
-            const overlay = document.getElementById('upload-overlay');
-            overlay.classList.add('active');
-            
-            // Reset states
-            document.getElementById('processing-animation').classList.remove('hidden');
-            document.getElementById('success-animation').classList.add('hidden');
-            document.getElementById('error-animation').classList.add('hidden');
-            
-            // Reset steps
-            resetProcessingSteps();
-        }
-
-        function closeUploadOverlay() {
-            const overlay = document.getElementById('upload-overlay');
-            overlay.classList.remove('active');
-        }
-
-        function resetProcessingSteps() {
-            const steps = ['step-extract', 'step-chunk', 'step-embed', 'step-index'];
-            steps.forEach(stepId => {
-                const step = document.getElementById(stepId);
-                step.className = 'step pending';
-                step.querySelector('.step-icon').textContent = steps.indexOf(stepId) + 1;
-            });
-        }
-
-        function updateProcessingStep(stepId, status) {
-            const step = document.getElementById(stepId);
-            step.className = `step ${status}`;
-            
-            if (status === 'completed') {
-                step.querySelector('.step-icon').textContent = '✓';
-            } else if (status === 'active') {
-                step.querySelector('.step-icon').innerHTML = '<span class="spinner" style="width:14px;height:14px;border-width:2px;"></span>';
-            }
-        }
-
-        function updateProgress(percent, fileNum, totalFiles) {
-            document.getElementById('upload-progress-bar').style.width = `${percent}%`;
-            document.getElementById('progress-text').textContent = `${Math.round(percent)}%`;
-            document.getElementById('progress-file').textContent = `File ${fileNum} of ${totalFiles}`;
-        }
-
-        function showUploadSuccess(message) {
-            document.getElementById('processing-animation').classList.add('hidden');
-            document.getElementById('success-animation').classList.remove('hidden');
-            document.getElementById('success-message').textContent = message;
-        }
-
-        function showUploadError(message) {
-            document.getElementById('processing-animation').classList.add('hidden');
-            document.getElementById('error-animation').classList.remove('hidden');
-            document.getElementById('error-message').textContent = message;
-        }
-
-        // ═══════════════════════════════════════════════════════════════════════
-        // UPLOAD FUNCTIONS WITH LOADING
-        // ═══════════════════════════════════════════════════════════════════════
-        async function uploadFiles() {
-            if (selectedFiles.length === 0) {
-                showNotification('Please select files to upload', 'warning');
-                return;
-            }
-
-            const btn = document.getElementById('upload-files-btn');
-            btn.disabled = true;
-
-            // Show overlay
-            showUploadOverlay();
-            totalFilesToUpload = selectedFiles.length;
-            currentUploadIndex = 0;
-
-            let successCount = 0;
-            let failCount = 0;
-            const results = [];
-
-            for (let i = 0; i < selectedFiles.length; i++) {
-                const file = selectedFiles[i];
-                currentUploadIndex = i + 1;
-                
-                // Update progress
-                const baseProgress = (i / selectedFiles.length) * 100;
-                updateProgress(baseProgress, currentUploadIndex, totalFilesToUpload);
-                document.getElementById('processing-title').textContent = `Processing: ${file.name}`;
-                
-                try {
-                    // Step 1: Extracting
-                    updateProcessingStep('step-extract', 'active');
-                    await sleep(300);
-                    updateProgress(baseProgress + 5, currentUploadIndex, totalFilesToUpload);
-                    
-                    // Step 2: Chunking
-                    updateProcessingStep('step-extract', 'completed');
-                    updateProcessingStep('step-chunk', 'active');
-                    await sleep(200);
-                    updateProgress(baseProgress + 10, currentUploadIndex, totalFilesToUpload);
-                    
-                    // Actual upload
-                    const formData = new FormData();
-                    formData.append('file', file);
-
-                    const response = await fetch('/upload', {
-                        method: 'POST',
-                        body: formData
-                    });
-
-                    const data = await response.json();
-                    
-                    // Step 3: Embedding
-                    updateProcessingStep('step-chunk', 'completed');
-                    updateProcessingStep('step-embed', 'active');
-                    await sleep(200);
-                    updateProgress(baseProgress + 15, currentUploadIndex, totalFilesToUpload);
-                    
-                    // Step 4: Indexing
-                    updateProcessingStep('step-embed', 'completed');
-                    updateProcessingStep('step-index', 'active');
-                    await sleep(200);
-                    updateProcessingStep('step-index', 'completed');
-                    
-                    const fileProgress = ((i + 1) / selectedFiles.length) * 100;
-                    updateProgress(fileProgress, currentUploadIndex, totalFilesToUpload);
-                    
-                    if (data.success) {
-                        successCount++;
-                        results.push({ name: file.name, success: true, ...data });
-                    } else {
-                        failCount++;
-                        results.push({ name: file.name, success: false, message: data.message });
-                    }
-                    
-                    // Reset steps for next file
-                    if (i < selectedFiles.length - 1) {
-                        await sleep(300);
-                        resetProcessingSteps();
-                    }
-                    
-                } catch (error) {
-                    failCount++;
-                    results.push({ name: file.name, success: false, message: error.message });
-                }
-            }
-
-            // Show final result
-            await sleep(500);
-            
-            if (successCount > 0) {
-                showUploadSuccess(`${successCount} file(s) processed successfully • ${results.reduce((acc, r) => acc + (r.chunks_created || 0), 0)} chunks created`);
-            } else {
-                showUploadError('All uploads failed. Please check your files and try again.');
-            }
-
-            // Reset
-            selectedFiles = [];
-            renderFileList();
-            document.getElementById('file-input').value = '';
-            btn.disabled = false;
-
-            // Refresh documents
-            loadDocuments();
-            updateStats();
-        }
-
-        async function uploadText() {
-            const content = document.getElementById('doc-input').value.trim();
-            const filename = document.getElementById('doc-name').value.trim() || 'document.txt';
-
-            if (!content) {
-                showNotification('Please enter document content', 'warning');
-                return;
-            }
-
-            const btn = document.getElementById('upload-text-btn');
-            const loader = document.getElementById('upload-text-loader');
-            
-            btn.disabled = true;
-            loader.classList.remove('hidden');
-
-            // Show overlay
-            showUploadOverlay();
-            document.getElementById('processing-title').textContent = `Processing: ${filename}`;
-            updateProgress(0, 1, 1);
-
-            try {
-                // Simulate processing steps
-                updateProcessingStep('step-extract', 'active');
-                await sleep(300);
-                updateProgress(20, 1, 1);
-                
-                updateProcessingStep('step-extract', 'completed');
-                updateProcessingStep('step-chunk', 'active');
-                await sleep(200);
-                updateProgress(40, 1, 1);
-
-                const response = await fetch('/upload', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ content, filename })
-                });
-
-                const data = await response.json();
-
-                updateProcessingStep('step-chunk', 'completed');
-                updateProcessingStep('step-embed', 'active');
-                await sleep(200);
-                updateProgress(70, 1, 1);
-                
-                updateProcessingStep('step-embed', 'completed');
-                updateProcessingStep('step-index', 'active');
-                await sleep(200);
-                updateProgress(100, 1, 1);
-                updateProcessingStep('step-index', 'completed');
-
-                await sleep(300);
-
-                if (data.success) {
-                    showUploadSuccess(`Document processed: ${data.doc_type} • ${data.chunks_created} chunks created`);
-                    document.getElementById('doc-input').value = '';
-                    document.getElementById('doc-name').value = '';
-                } else {
-                    showUploadError(data.message);
-                }
-
-                loadDocuments();
-                updateStats();
-
-            } catch (error) {
-                showUploadError(error.message);
-            } finally {
-                btn.disabled = false;
-                loader.classList.add('hidden');
-            }
-        }
-
-        // ═══════════════════════════════════════════════════════════════════════
-        // DOCUMENTS MANAGEMENT
-        // ═══════════════════════════════════════════════════════════════════════
-        async function loadDocuments() {
-            try {
-                const response = await fetch('/documents');
-                const data = await response.json();
-                uploadedDocuments = data.documents || [];
-                renderDocumentsList();
-            } catch (error) {
-                console.error('Failed to load documents:', error);
-            }
-        }
-
-        function renderDocumentsList() {
-            const section = document.getElementById('documents-section');
-            const listEl = document.getElementById('documents-list');
-            const badge = document.getElementById('doc-count-badge');
-
-            if (uploadedDocuments.length === 0) {
-                section.classList.add('hidden');
-                return;
-            }
-
-            section.classList.remove('hidden');
-            badge.textContent = uploadedDocuments.length;
-
-            listEl.innerHTML = uploadedDocuments.map(doc => `
-                <div class="doc-card flex justify-between items-center fade-in">
-                    <div class="flex items-center gap-3">
-                        <span class="text-2xl">${getFileIcon(doc.filename)}</span>
-                        <div>
-                            <div class="font-medium text-gray-800 text-sm">${doc.filename}</div>
-                            <div class="flex items-center gap-2 mt-1">
-                                <span class="doc-type-tag">${doc.doc_type}</span>
-                                <span class="text-gray-400 text-xs">${doc.chunks} chunks</span>
-                            </div>
-                        </div>
-                    </div>
-                    <button onclick="deleteDocument('${doc.doc_id}')" class="text-red-500 hover:text-red-700 p-2">
-                        🗑️
-                    </button>
-                </div>
-            `).join('');
-        }
-
-        async function deleteDocument(docId) {
-            if (!confirm('Delete this document?')) return;
-            try {
-                const response = await fetch(`/documents/${docId}`, { method: 'DELETE' });
-                const data = await response.json();
-                if (data.success) {
-                    showNotification('Document deleted', 'success');
-                    loadDocuments();
-                    updateStats();
-                }
-            } catch (error) {
-                showNotification('Failed to delete', 'error');
-            }
-        }
-
-        async function clearAllDocuments() {
-            if (!confirm('Delete ALL documents?')) return;
-            try {
-                await fetch('/clear', { method: 'POST' });
-                showNotification('All documents cleared', 'success');
-                loadDocuments();
-                updateStats();
-                document.getElementById('answer-section').classList.add('hidden');
-            } catch (error) {
-                showNotification('Failed to clear', 'error');
-            }
-        }
-
-        // ═══════════════════════════════════════════════════════════════════════
-        // QUESTION & ANSWER
-        // ═══════════════════════════════════════════════════════════════════════
-        function setQuestion(question) {
-            document.getElementById('question-input').value = question;
-            document.getElementById('question-input').focus();
-        }
-
-        async function askQuestion() {
-            const question = document.getElementById('question-input').value.trim();
-            if (!question) {
-                showNotification('Please enter a question', 'warning');
-                return;
-            }
-
-            const btn = document.getElementById('ask-btn');
-            const loader = document.getElementById('ask-loader');
-            const section = document.getElementById('answer-section');
-            const answerLoading = document.getElementById('answer-loading');
-            const answerContent = document.getElementById('answer-content');
-
-            btn.disabled = true;
-            loader.classList.remove('hidden');
-            
-            // Show section with loading state
-            section.classList.remove('hidden');
-            answerLoading.classList.remove('hidden');
-            answerContent.classList.add('hidden');
-
-            try {
-                const response = await fetch('/ask', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ question, simplify: true })
-                });
-
-                const data = await response.json();
-
-                // Hide loading, show content
-                answerLoading.classList.add('hidden');
-                answerContent.classList.remove('hidden');
-
-                // Display answer
-                document.getElementById('answer-text').textContent = data.answer;
-
-                // Confidence
-                const confEl = document.getElementById('confidence-display');
-                const confidence = (data.confidence * 100).toFixed(1);
-                confEl.textContent = `Confidence: ${confidence}%`;
-                confEl.className = 'px-3 py-1 rounded-full font-medium ';
-                confEl.className += data.confidence > 0.7 ? 'bg-green-100 text-green-700' :
-                                    data.confidence > 0.4 ? 'bg-yellow-100 text-yellow-700' :
-                                    'bg-red-100 text-red-700';
-
-                document.getElementById('time-display').textContent = `${data.processing_time_ms}ms`;
-
-                // Simplified
-                const simpSection = document.getElementById('simplified-section');
-                if (data.simplified && data.simplified !== data.answer) {
-                    simpSection.classList.remove('hidden');
-                    document.getElementById('simplified-text').textContent = data.simplified;
-                } else {
-                    simpSection.classList.add('hidden');
-                }
-
-                // Concepts
-                const conceptsSection = document.getElementById('concepts-section');
-                if (data.concepts?.length > 0) {
-                    conceptsSection.classList.remove('hidden');
-                    document.getElementById('concepts-list').innerHTML = data.concepts.map(c => 
-                        `<span class="concept-tag tooltip" data-tip="${c.definition || ''}">${c.term}</span>`
-                    ).join('');
-                } else {
-                    conceptsSection.classList.add('hidden');
-                }
-
-                // Citations
-                const citationsSection = document.getElementById('citations-section');
-                if (data.citations?.length > 0) {
-                    citationsSection.classList.remove('hidden');
-                    document.getElementById('citations-list').innerHTML = data.citations.map(c => 
-                        `<span class="citation-tag">${c.citation}</span>`
-                    ).join('');
-                } else {
-                    citationsSection.classList.add('hidden');
-                }
-
-                // Sources
-                const sourcesSection = document.getElementById('sources-section');
-                if (data.sources?.length > 0) {
-                    sourcesSection.classList.remove('hidden');
-                    document.getElementById('sources-list').innerHTML = data.sources.map(s => `
-                        <div class="source-card p-4 rounded-lg">
-                            <div class="flex justify-between items-start mb-2">
-                                <div>
-                                    <span class="font-medium text-gray-800">${s.section || 'Section'}</span>
-                                    <span class="doc-type-tag ml-2">${s.doc_type}</span>
-                                </div>
-                                <span class="text-sm text-gray-500">Score: ${s.score}</span>
-                            </div>
-                            <div class="text-gray-500 text-xs mb-2">${s.filename}</div>
-                            <p class="text-gray-600 text-sm">${s.preview}</p>
-                        </div>
-                    `).join('');
-                } else {
-                    sourcesSection.classList.add('hidden');
-                }
-
-            } catch (error) {
-                answerLoading.classList.add('hidden');
-                answerContent.classList.remove('hidden');
-                document.getElementById('answer-text').textContent = `Error: ${error.message}`;
-            } finally {
-                btn.disabled = false;
-                loader.classList.add('hidden');
-            }
-        }
-
-        // ═══════════════════════════════════════════════════════════════════════
-        // SAMPLE DOCUMENTS
-        // ═══════════════════════════════════════════════════════════════════════
-        function loadSample(sampleId) {
-            const sample = samples[sampleId];
-            if (!sample) return;
-            switchTab('text');
-            document.getElementById('doc-input').value = sample.text;
-            document.getElementById('doc-name').value = sample.name;
-            showNotification(`Loaded "${sample.name}" - Click Upload to process`, 'info');
-        }
-
-        // ═══════════════════════════════════════════════════════════════════════
-        // UTILITY FUNCTIONS
-        // ═══════════════════════════════════════════════════════════════════════
-        function sleep(ms) {
-            return new Promise(resolve => setTimeout(resolve, ms));
-        }
-
-        async function updateStats() {
-            try {
-                const response = await fetch('/stats');
-                const data = await response.json();
-                const docCount = data.documents?.length || 0;
-                const chunkCount = data.total_chunks || 0;
-                document.getElementById('stats-display').textContent = `${docCount} document${docCount !== 1 ? 's' : ''} • ${chunkCount} chunks`;
-            } catch (error) {
-                console.error('Failed to update stats:', error);
-            }
-        }
-
-        function showNotification(message, type = 'info') {
-            const colors = {
-                success: 'bg-green-500',
-                error: 'bg-red-500',
-                warning: 'bg-yellow-500',
-                info: 'bg-blue-500'
-            };
-            const icons = { success: '✅', error: '❌', warning: '⚠️', info: 'ℹ️' };
-
-            const notification = document.createElement('div');
-            notification.className = `fixed top-4 right-4 ${colors[type]} text-white px-6 py-3 rounded-lg shadow-lg z-50 fade-in flex items-center gap-2`;
-            notification.innerHTML = `<span>${icons[type]}</span><span>${message}</span>`;
-            document.body.appendChild(notification);
-
-            setTimeout(() => {
-                notification.style.opacity = '0';
-                notification.style.transform = 'translateX(100px)';
-                notification.style.transition = 'all 0.3s ease';
-                setTimeout(() => notification.remove(), 300);
-            }, 3000);
-        }
+        console.log('🇮🇳 Indian Legal RAG initialized');
     </script>
 </body>
 </html>
+
+            
