@@ -1,0 +1,15 @@
+# Core Framework
+flask==3.0.0
+flask-cors==4.0.0
+gunicorn==21.2.0
+
+# HTTP & Processing
+requests==2.31.0
+numpy==1.26.3
+
+# Document Processing (lazy loaded)
+PyPDF2==3.0.1
+python-docx==1.1.0
+
+# Production
+werkzeug==3.0.1
